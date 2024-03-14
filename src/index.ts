@@ -3,8 +3,12 @@ import { Action, BuildParameters, Cache, CloudRunner, Docker, ImageTag, Output }
 import { Cli } from './model/cli/cli';
 import MacBuilder from './model/mac-builder';
 import PlatformSetup from './model/platform-setup';
+import SetupMac from './model/platform-setup/setup-mac';
 
 async function runMain() {
+  await SetupMac.arch();
+
+  return;
   try {
     if (Cli.InitCliMode()) {
       await Cli.RunCli();

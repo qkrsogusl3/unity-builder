@@ -2,7 +2,7 @@ import { BuildParameters } from '..';
 import { getUnityChangeset } from 'unity-changeset';
 import { exec, getExecOutput } from '@actions/exec';
 import { restoreCache, saveCache } from '@actions/cache';
-
+import os from 'os';
 import fs from 'node:fs';
 
 class SetupMac {
@@ -21,6 +21,16 @@ class SetupMac {
       : SetupMac.installUnityModules(buildParameters));
 
     await SetupMac.setEnvironmentVariables(buildParameters, actionFolder);
+  }
+
+  public static async arch() {
+    await exec(`echo "${process.arch}"`);
+
+    await exec(`echo "${SetupMac.getArchitectureParameters()}"`);
+
+    await exec(`echo "${os.platform()}"`);
+
+    await exec(`echo "${os.arch()}"`);
   }
 
   private static async installUnityHub(buildParameters: BuildParameters, silent = false) {

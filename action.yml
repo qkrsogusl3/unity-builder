@@ -3,7 +3,7 @@ author: Webber Takken <webber@takken.io>
 description: 'Build Unity projects for different platforms.'
 inputs:
   targetPlatform:
-    required: true
+    required: false
     default: ''
     description: 'Platform that the build should target.'
   unityVersion:
