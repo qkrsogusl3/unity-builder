@@ -16,9 +16,9 @@ class SetupMac {
       await SetupMac.installUnityHub(buildParameters);
     }
 
-    if (!fs.existsSync(unityEditorPath.replace(/"/g, ''))) {
-      await SetupMac.installUnity(buildParameters);
-    }
+    await (!fs.existsSync(unityEditorPath.replace(/"/g, ''))
+      ? SetupMac.installUnity(buildParameters)
+      : SetupMac.installUnityModules(buildParameters));
 
     await SetupMac.setEnvironmentVariables(buildParameters, actionFolder);
   }
@@ -158,6 +158,28 @@ class SetupMac {
 
     if (buildParameters.cacheUnityInstallationOnMac) {
       await saveCache([unityEditorPath], key);
+    }
+  }
+
+  private static async installUnityModules(buildParameters: BuildParameters, silent = false) {
+    const moduleArguments = SetupMac.getModuleParametersForTargetPlatform(buildParameters.targetPlatform);
+
+    const execArguments: string[] = [
+      '--',
+      '--headless',
+      'install-modules',
+      ...['--version', buildParameters.editorVersion],
+      ...moduleArguments,
+      '--childModules',
+    ];
+
+    // Ignoring return code because the install-modules command will fail if the modules already are installed.
+    const errorCode = await exec(this.unityHubExecPath, execArguments, {
+      silent,
+      ignoreReturnCode: true,
+    });
+    if (errorCode) {
+      throw new Error(`There was an error installing the Unity Editor modules. See logs above for details.`);
     }
   }
 
