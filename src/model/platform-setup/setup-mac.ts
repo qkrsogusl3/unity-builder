@@ -174,13 +174,18 @@ class SetupMac {
     ];
 
     // Ignoring return code because the install-modules command will fail if the modules already are installed.
-    const errorCode = await exec(this.unityHubExecPath, execArguments, {
+    const result = await getExecOutput(this.unityHubExecPath, execArguments, {
       silent,
       ignoreReturnCode: true,
     });
-    if (errorCode) {
-      const message = `There was an error installing the Unity Editor modules. See logs above for details. (code ${errorCode})`;
-      throw new Error(message);
+    if (result.exitCode) {
+      let ignoreError = false;
+      if (result.stdout.includes('Error: No modules found to install.')) {
+        ignoreError = true;
+      }
+      if (!ignoreError) {
+        throw new Error(`There was an error installing the Unity Editor modules. See logs above for details.`);
+      }
     }
   }
 
