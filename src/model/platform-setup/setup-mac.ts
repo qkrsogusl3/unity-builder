@@ -179,7 +179,8 @@ class SetupMac {
       ignoreReturnCode: true,
     });
     if (errorCode) {
-      throw new Error(`There was an error installing the Unity Editor modules. See logs above for details.`);
+      const message = `There was an error installing the Unity Editor modules. See logs above for details. (code ${errorCode})`;
+      throw new Error(message);
     }
   }
 
